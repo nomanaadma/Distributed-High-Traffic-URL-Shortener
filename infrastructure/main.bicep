@@ -2,6 +2,14 @@
 
 var uniqueId = uniqueString(resourceGroup().id)
 
+module keyVault 'modules/secrets/keyvault.bicep' = {
+  name: 'keyVaultDeployment'
+  params: {
+    vaultName: 'kv-${uniqueId}'
+    location: location
+  }
+}
+
 module apiService 'modules/compute/appservice.bicep' = {
   name: 'apiDeployment'
   params: {
@@ -9,4 +17,19 @@ module apiService 'modules/compute/appservice.bicep' = {
     appServicePlanName: 'plan-api-${uniqueId}'
     location: location
   }
+}
+
+module keyVaultRoleAssignment 'modules/secrets/key-vault-role-assignment.bicep' = {
+  name: 'keyVaultRoleAssignmentDeployment'
+  params: {
+    keyVaultName: keyVault.outputs.name
+    principalIds: [
+      apiService.outputs.principalId
+      // Add more principal IDs as needed
+    ]
+  }
+  dependsOn: [
+    keyVault
+    apiService
+  ]
 }
