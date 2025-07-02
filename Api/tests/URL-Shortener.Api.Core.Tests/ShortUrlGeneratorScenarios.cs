@@ -4,12 +4,6 @@ namespace URL_Shortener.Api.Core.Tests;
 
 public class ShortUrlGeneratorScenarios
 {
-	// TEST LIST
-	// 1. Check if the end range is greater than the start range
-	// 2. Unique
-	// 3. Accept multiple ranges
-	// 4. Range as a type
-	
 	[Fact]
 	public void Should_return_short_url_for_10001()
 	{

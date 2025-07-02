@@ -2,7 +2,7 @@
 
 public class ShortUrlGenerator(TokenProvider tokenProvider)
 {
-	public object GenerateUniqueUrl()
+	public string GenerateUniqueUrl()
 	{
 		return tokenProvider.GetToken().EncodeToBase62();
 	}
