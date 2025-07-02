@@ -1,4 +1,4 @@
-﻿namespace URL_Shortener.Core;
+﻿namespace URL_Shortener.Core.Urls.Add;
 
 public class ShortUrlGenerator(TokenProvider tokenProvider)
 {
