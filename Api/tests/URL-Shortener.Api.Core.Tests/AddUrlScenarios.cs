@@ -25,8 +25,9 @@ public class AddUrlScenarios
 		var request = CreateAddUrlRequest();
 		var response = await _handler.HandleAsync(request, CancellationToken.None); 
 		
-		response.ShortUrl.Should().NotBeNullOrEmpty();
-		response.ShortUrl.Should().Be("1");
+		response.Succeeded.Should().BeTrue();
+		response.Value!.ShortUrl.Should().NotBeNullOrEmpty();
+		response.Value!.ShortUrl.Should().Be("1");
 	}
 	
 	[Fact]
@@ -36,7 +37,9 @@ public class AddUrlScenarios
 
 		var response = await _handler.HandleAsync(request, CancellationToken.None);
 		
-		_urlDataStore.Should().ContainKey(response.ShortUrl);
+		response.Succeeded.Should().BeTrue();
+		
+		_urlDataStore.Should().ContainKey(response.Value!.ShortUrl);
 	}
 	
 	[Fact]
@@ -46,8 +49,9 @@ public class AddUrlScenarios
 
 		var response = await _handler.HandleAsync(request, CancellationToken.None);
 	
-		_urlDataStore.Should().ContainKey(response.ShortUrl);
-		_urlDataStore[response.ShortUrl].CreatedBy.Should().Be(request.CreatedBy);
+		response.Succeeded.Should().BeTrue();
+		_urlDataStore.Should().ContainKey(response.Value!.ShortUrl);
+		_urlDataStore[response.Value!.ShortUrl].CreatedBy.Should().Be(request.CreatedBy);
 	}
 	
 	[Fact]
@@ -56,14 +60,29 @@ public class AddUrlScenarios
 		var request = CreateAddUrlRequest();
 
 		var response = await _handler.HandleAsync(request, CancellationToken.None);
+		
+		response.Succeeded.Should().BeTrue();
+		_urlDataStore.Should().ContainKey(response.Value!.ShortUrl);
+		_urlDataStore[response.Value!.ShortUrl].CreatedBy.Should().Be(request.CreatedBy);
+		_urlDataStore[response.Value!.ShortUrl].CreatedOn.Should().Be(_timeProvider.GetUtcNow());
+	}
 	
-		_urlDataStore.Should().ContainKey(response.ShortUrl);
-		_urlDataStore[response.ShortUrl].CreatedBy.Should().Be(request.CreatedBy);
-		_urlDataStore[response.ShortUrl].CreatedOn.Should().Be(_timeProvider.GetUtcNow());
+	[Fact]
+	public async Task Should_return_error_if_create_by_is_empty()
+	{
+		var request = CreateAddUrlRequest(string.Empty);
+
+		var response = await _handler.HandleAsync(request, CancellationToken.None);
+	
+		response.Succeeded.Should().BeFalse();
+		response.Error.Code.Should().Be("missing_value");
+
 	}
 
-	private static AddUrlRequest CreateAddUrlRequest()
+	private static AddUrlRequest CreateAddUrlRequest(string createdBy = "nomanaadma@gmail.com")
 	{
-		return new AddUrlRequest(new Uri("https://example.com/long-url"), "nomanaadma@gmail.com");
+		return new AddUrlRequest(
+			LongUrl: new Uri("https://example.com/long-url"), 
+			CreatedBy: createdBy);
 	}
 }
