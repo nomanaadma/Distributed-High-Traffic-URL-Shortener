@@ -2,6 +2,7 @@
 param appServicePlanName string
 param appName string
 param keyVaultName string
+param appSettings array = []
 
 resource appServicePlan 'Microsoft.Web/serverfarms@2023-12-01' = {
   kind: 'linux'
@@ -23,13 +24,16 @@ resource webApp 'Microsoft.Web/sites@2023-12-01' = {
     httpsOnly: true
     siteConfig: {
       linuxFxVersion: 'DOTNETCORE|9.0'
-      appSettings: [
+      appSettings: concat([
         {
           name: 'keyVaultName'
           value: keyVaultName
         }
-      ]
+      ], appSettings)
     }
+  }
+  identity: {
+    type: 'SystemAssigned'
   }
 }
 

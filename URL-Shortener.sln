@@ -17,6 +17,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "URL-Shortener.Core", "Api\s
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "URL-Shortener.Tests", "Api\tests\URL-Shortener.Tests\URL-Shortener.Tests.csproj", "{4CF27CE1-4115-4BE5-80BD-055412324BF1}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "URL-Shortener.Infrastructure", "Api\src\URL-Shortener.Infrastructure\URL-Shortener.Infrastructure.csproj", "{A4B30554-9F9F-411B-A61C-0F0B94C9DD19}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -75,6 +77,18 @@ Global
 		{4CF27CE1-4115-4BE5-80BD-055412324BF1}.Release|x64.Build.0 = Release|Any CPU
 		{4CF27CE1-4115-4BE5-80BD-055412324BF1}.Release|x86.ActiveCfg = Release|Any CPU
 		{4CF27CE1-4115-4BE5-80BD-055412324BF1}.Release|x86.Build.0 = Release|Any CPU
+		{A4B30554-9F9F-411B-A61C-0F0B94C9DD19}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A4B30554-9F9F-411B-A61C-0F0B94C9DD19}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A4B30554-9F9F-411B-A61C-0F0B94C9DD19}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{A4B30554-9F9F-411B-A61C-0F0B94C9DD19}.Debug|x64.Build.0 = Debug|Any CPU
+		{A4B30554-9F9F-411B-A61C-0F0B94C9DD19}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{A4B30554-9F9F-411B-A61C-0F0B94C9DD19}.Debug|x86.Build.0 = Debug|Any CPU
+		{A4B30554-9F9F-411B-A61C-0F0B94C9DD19}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A4B30554-9F9F-411B-A61C-0F0B94C9DD19}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A4B30554-9F9F-411B-A61C-0F0B94C9DD19}.Release|x64.ActiveCfg = Release|Any CPU
+		{A4B30554-9F9F-411B-A61C-0F0B94C9DD19}.Release|x64.Build.0 = Release|Any CPU
+		{A4B30554-9F9F-411B-A61C-0F0B94C9DD19}.Release|x86.ActiveCfg = Release|Any CPU
+		{A4B30554-9F9F-411B-A61C-0F0B94C9DD19}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -86,5 +100,6 @@ Global
 		{28F87D35-2956-4C69-8BDA-EF83D4894E0C} = {ABDE9481-5F0C-45A8-919B-E52FF56AB49B}
 		{152E1184-B0A3-4F08-894F-64240DA28E49} = {CAA52C60-5CAA-427C-8ED7-C26C9FE4F4ED}
 		{4CF27CE1-4115-4BE5-80BD-055412324BF1} = {ABDE9481-5F0C-45A8-919B-E52FF56AB49B}
+		{A4B30554-9F9F-411B-A61C-0F0B94C9DD19} = {CAA52C60-5CAA-427C-8ED7-C26C9FE4F4ED}
 	EndGlobalSection
 EndGlobal

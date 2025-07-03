@@ -1,6 +1,7 @@
 using Azure.Identity;
 using URL_Shortener.Api.Extensions;
 using URL_Shortener.Core.Urls.Add;
+using URL_Shortener.Infrastructure.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,7 +19,9 @@ if (!string.IsNullOrEmpty(keyVaultName))
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 builder.Services.AddSingleton(TimeProvider.System);
-builder.Services.AddUrlFeature();
+builder.Services
+    .AddUrlFeature()
+    .AddCosmosUrlDataStore(builder.Configuration);
 
 var app = builder.Build();
 
