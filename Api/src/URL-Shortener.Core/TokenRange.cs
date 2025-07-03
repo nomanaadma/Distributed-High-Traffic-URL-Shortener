@@ -2,7 +2,7 @@
 
 public record TokenRange
 {
-	public TokenRange(long start, long end)
+	public TokenRange(int start, int end)
 	{
 		
 		if (end < start)
@@ -11,6 +11,6 @@ public record TokenRange
 		Start = start;
 		End = end;
 	}
-	public long Start { get; }
-	public long End { get; }
+	public int Start { get; }
+	public int End { get; }
 }
