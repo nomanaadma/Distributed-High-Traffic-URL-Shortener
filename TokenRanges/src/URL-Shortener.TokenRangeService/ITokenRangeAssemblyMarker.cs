@@ -1,0 +1,3 @@
+﻿namespace URL_Shortener.TokenRangeService;
+
+public interface ITokenRangeAssemblyMarker;

@@ -1,6 +1,9 @@
-@URL_Shortener.TokenRangeService_HostAddress = http://localhost:5116
-
-GET {{URL_Shortener.TokenRangeService_HostAddress}}/weatherforecast/
+POST https://token-range-service-piza2nvlxc5jg.azurewebsites.net/assign
 Accept: application/json
+Content-Type: application/json
+
+{
+  "key": "A1234"
+}
 
 ###
