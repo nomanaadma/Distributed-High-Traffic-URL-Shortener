@@ -5,7 +5,7 @@ namespace URL_Shortener.Api.Core.Tests;
 
 public class TokenProviderScenarios
 {
-    private TokenProvider _provider = new();
+    private readonly TokenProvider _provider = new();
 
     [Fact]
     public void Should_get_the_token_from_start()
@@ -39,34 +39,34 @@ public class TokenProviderScenarios
         tokens.Should().OnlyHaveUniqueItems();
     }
     
-    // [Fact]
-    // public void Should_use_multiple_ranges()
-    // {
-    //     _provider.AssignRange(1, 2);
-    //     _provider.AssignRange(42, 45);
-    //     _provider.GetToken(); // 1
-    //     _provider.GetToken(); // 2
-    //
-    //     var token = _provider.GetToken(); // 42
-    //
-    //     token.Should().Be(42);
-    // }
+    [Fact]
+    public void Should_use_multiple_ranges()
+    {
+        _provider.AssignRange(1, 2);
+        _provider.AssignRange(42, 45);
+        _provider.GetToken(); // 1
+        _provider.GetToken(); // 2
+    
+        var token = _provider.GetToken(); // 42
+    
+        token.Should().Be(42);
+    }
 
-    // [Fact]
-    // public void Should_trigger_reaching_range_limit_event_when_range_is_at_80_percent()
-    // {
-    //     _provider.AssignRange(1, 10);
-    //     bool eventTriggered = false;
-    //     _provider.ReachingRangeLimit += (sender, args) =>
-    //     {
-    //         eventTriggered = true;
-    //     };
-    //
-    //     for (int i = 0; i < 8; i++)
-    //     {  
-    //         _provider.GetToken();
-    //     }
-    //
-    //     eventTriggered.Should().BeTrue();
-    // }
+    [Fact]
+    public void Should_trigger_reaching_range_limit_event_when_range_is_at_80_percent()
+    {
+        _provider.AssignRange(1, 10);
+        var eventTriggered = false;
+        _provider.ReachingRangeLimit += (sender, args) =>
+        {
+            eventTriggered = true;
+        };
+    
+        for (var i = 0; i < 8; i++)
+        {  
+            _provider.GetToken();
+        }
+    
+        eventTriggered.Should().BeTrue();
+    }
 }

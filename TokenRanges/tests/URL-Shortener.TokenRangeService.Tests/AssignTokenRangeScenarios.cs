@@ -11,9 +11,9 @@ public class AssignTokenRangeScenarios(Fixture fixture) : IClassFixture<Fixture>
     [Fact]
     public async Task Should_return_range_when_requested()
     {
-        var requestResponse = await AssignTokenPostAsync();
-    
-        requestResponse.Should().BeSuccessful();
+        var requestResponse = await AssignTokenPostAsync("tests");
+
+        requestResponse.Should().Be2XXSuccessful();
         
         var tokenRange = await requestResponse.Content
             .ReadFromJsonAsync<TokenRangeResponse>();
@@ -24,11 +24,11 @@ public class AssignTokenRangeScenarios(Fixture fixture) : IClassFixture<Fixture>
     [Fact]
     public async Task Should_not_repeat_range_when_requested()
     {
-        var requestResponse1 = await AssignTokenPostAsync();
-        var requestResponse2 = await AssignTokenPostAsync();
+        var requestResponse1 = await AssignTokenPostAsync("tests");
+        var requestResponse2 = await AssignTokenPostAsync("tests");
         
-        requestResponse1.Should().BeSuccessful();
-        requestResponse2.Should().BeSuccessful();
+        requestResponse1.Should().Be2XXSuccessful();
+        requestResponse2.Should().Be2XXSuccessful();
         
         var tokenRange1 = await requestResponse1.Content
             .ReadFromJsonAsync<TokenRangeResponse>();
@@ -44,10 +44,8 @@ public class AssignTokenRangeScenarios(Fixture fixture) : IClassFixture<Fixture>
         ConcurrentBag<TokenRangeResponse> ranges = [];
         await Parallel.ForEachAsync(Enumerable.Range(1, 100), async (number, cancellationToken) =>
         {
-            var response = await _client
-                .PostAsJsonAsync("/assign", 
-                    new AssignTokenRangeRequest(number.ToString()), 
-                    cancellationToken);
+            var response = await AssignTokenPostAsync(number.ToString());
+            
             if (response.IsSuccessStatusCode)
             {
                 var range = await response.Content
@@ -60,10 +58,10 @@ public class AssignTokenRangeScenarios(Fixture fixture) : IClassFixture<Fixture>
         ranges.Should().OnlyHaveUniqueItems(x => x.End);
     }
     
-    private async Task<HttpResponseMessage> AssignTokenPostAsync()
+    private async Task<HttpResponseMessage> AssignTokenPostAsync(string key)
     {
         return await _client.PostAsJsonAsync("/assign",
-            new AssignTokenRangeRequest("tests"));
+            new AssignTokenRangeRequest(key));
     }
 }
 

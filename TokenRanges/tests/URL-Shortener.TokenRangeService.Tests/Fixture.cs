@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc.Testing;
+using Npgsql;
+using Testcontainers.PostgreSql;
 
 namespace URL_Shortener.TokenRangeService.Tests;
 
@@ -29,10 +31,16 @@ public class Fixture : WebApplicationFactory<ITokenRangeAssemblyMarker>, IAsyncL
 		await command.ExecuteNonQueryAsync();
 	}
 
-	public async Task DisposeAsync()
+	public override async ValueTask DisposeAsync()
 	{
 		await _postgresContainer.StopAsync();
 		await base.DisposeAsync();
+		GC.SuppressFinalize(this);
+	}
+	
+	async Task IAsyncLifetime.DisposeAsync()
+	{
+		await DisposeAsync();
 	}
 	
 }

@@ -1,3 +1,4 @@
+using Azure.Identity;
 using URL_Shortener.TokenRangeService;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -22,7 +23,7 @@ app.MapGet("/", () => "TokenRange Service");
 
 app.MapPost("/assign", async (AssignTokenRangeRequest request, TokenRangeManager manager) =>
 {
-	var range = manager.AssignRangeAsync(request.Key);
+	var range = await manager.AssignRangeAsync(request.Key);
 	return range;
 });
 

@@ -4,14 +4,9 @@ using URL_Shortener.Core.Urls.Add;
 
 namespace URL_Shortener.Tests;
 
-public class AddUrlFeature : IClassFixture<ApiFixture>
+public class AddUrlFeature(ApiFixture fixture) : IClassFixture<ApiFixture>
 {
-    private readonly HttpClient _client;
-
-    public AddUrlFeature(ApiFixture fixture)
-    {
-        _client = fixture.CreateClient();
-    }
+    private readonly HttpClient _client = fixture.CreateClient();
 
     [Fact]
     public async Task Given_long_url_Should_return_short_url()

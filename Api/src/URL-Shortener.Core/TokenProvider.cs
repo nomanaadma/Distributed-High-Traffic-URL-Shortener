@@ -1,26 +1,68 @@
-﻿namespace URL_Shortener.Core;
+﻿using System.Collections.Concurrent;
+
+namespace URL_Shortener.Core;
 
 public class TokenProvider
 {
 	private readonly Lock _tokenLock = new();
-	private long _token = 0;
-	private TokenRange? _tokenRange;
+	private readonly ConcurrentQueue<TokenRange> _ranges = new();
+
+	private long _currentToken = 0;
+	private TokenRange? _currentTokenRange;
+
 	public void AssignRange(int start, int end)
 	{
 		AssignRange(new TokenRange(start, end));
 	}
-	
+
 	public void AssignRange(TokenRange tokenRange)
 	{
-		_tokenRange = tokenRange;
-		_token = tokenRange.Start;
+		_ranges.Enqueue(tokenRange);
 	}
-	
+
 	public long GetToken()
 	{
 		lock (_tokenLock)
 		{
-			return _token++;
+			if (
+				_currentToken > _currentTokenRange?.End || _currentTokenRange is null)
+				MoveToNextRange();
+
+			if (IsReachingRangeLimit())
+				OnRangeThresholdReached(new ReachingRangeLimitEventArgs()
+				{
+					RangeLimit = _currentTokenRange!.End,
+					Token = _currentToken
+				});
+
+			return _currentToken++;
 		}
 	}
+
+	private bool IsReachingRangeLimit()
+	{
+		var currentIndex = _currentToken + 1 - _currentTokenRange!.Start;
+		var total = _currentTokenRange.End - _currentTokenRange.Start;
+		return currentIndex >= total * 0.8;
+	}
+
+	public event EventHandler? ReachingRangeLimit;
+
+	protected virtual void OnRangeThresholdReached(EventArgs e)
+	{
+		ReachingRangeLimit?.Invoke(this, e);
+	}
+
+	private void MoveToNextRange()
+	{
+		if (!_ranges.TryDequeue(out _currentTokenRange))
+			throw new IndexOutOfRangeException();
+		_currentToken = _currentTokenRange.Start;
+	}
+}
+
+public class ReachingRangeLimitEventArgs : EventArgs
+{
+	public long Token { get; set; }
+	public long RangeLimit { get; set; }
 }

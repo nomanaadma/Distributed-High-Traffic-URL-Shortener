@@ -2,6 +2,7 @@ using Azure.Identity;
 using URL_Shortener.Api.Extensions;
 using URL_Shortener.Core.Urls.Add;
 using URL_Shortener.Infrastructure.Extensions;
+using Url_Shortener.Api;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,6 +23,18 @@ builder.Services.AddSingleton(TimeProvider.System);
 builder.Services
     .AddUrlFeature()
     .AddCosmosUrlDataStore(builder.Configuration);
+
+builder.Services.AddSingleton<IEnvironmentManager, EnvironmentManager>();
+builder.Services.AddSingleton<ITokenRangeApiClient, TokenRangeApiClient>();
+
+builder.Services.AddHttpClient("TokenRangeService",
+    client =>
+    {
+        client.BaseAddress = 
+            new Uri(builder.Configuration["TokenRangeService:Endpoint"]!);
+    });
+
+builder.Services.AddHostedService<TokenManager>();
 
 var app = builder.Build();
 

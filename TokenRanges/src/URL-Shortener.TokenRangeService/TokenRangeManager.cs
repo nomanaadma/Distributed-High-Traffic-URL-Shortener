@@ -1,3 +1,5 @@
+using Npgsql;
+
 namespace URL_Shortener.TokenRangeService;
 
 internal class TokenRangeManager(string connectionString)
