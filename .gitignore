@@ -420,3 +420,4 @@ FodyWeavers.xsd
 # jetbrains Rider
 *.sln.iml
 /.idea/
+resources/notes.txt
