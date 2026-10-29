@@ -4,7 +4,7 @@ namespace URL_Shortener.TokenRangeService;
 
 internal class TokenRangeManager(string connectionString)
 {
-    private const int DefaultRangeSize = 1000; 
+    private const int DefaultRangeSize = 5;
 
     private readonly string _sqlQuery = 
         $"""
@@ -12,7 +12,7 @@ internal class TokenRangeManager(string connectionString)
              VALUES (
                  @MachineIdentifier,
                  COALESCE((SELECT MAX("End") FROM "TokenRanges") + 1, {DefaultRangeSize}),
-                 COALESCE((SELECT MAX("End") FROM "TokenRanges") + {DefaultRangeSize}, 2000)
+                 COALESCE((SELECT MAX("End") FROM "TokenRanges") + {DefaultRangeSize}, 10)
              )
              RETURNING "Id", "MachineIdentifier", "Start", "End";
         """;
