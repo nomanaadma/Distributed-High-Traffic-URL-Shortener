@@ -15,19 +15,19 @@ az login
 ### Create Resource Group
 
 ```bash
-az group create --name url-shortener-dev --location westeurope
+az group create --name url-shortener-dev-rg --location eastasia
 ```
 
 ### Deploy Bicep
 
 ### What if
 ```bash
-az deployment group what-if --resource-group url-shortener-dev --template-file infrastructure/main.bicep
+az deployment group what-if --resource-group url-shortener-dev-rg --template-file infrastructure/main.bicep
 ```
 
 ### Deploy
 ```bash
-az deployment group create --resource-group url-shortener-dev --template-file infrastructure/main.bicep
+az deployment group create --resource-group url-shortener-dev-rg --template-file infrastructure/main.bicep
 ```
 
 ### Create User for GH Actions
@@ -35,14 +35,14 @@ az deployment group create --resource-group url-shortener-dev --template-file in
 ```bash
 az ad sp create-for-rbac --name "GitHub-Actions-SP" \
                          --role contributor \
-                         --scopes /subscriptions/89518450-6f9c-4039-8834-c5bab3ad3e92 \
+                         --scopes /subscriptions/9fa5afcc-60f3-4e03-beff-f5f5b18b5a1e \
                          --sdk-auth
 ```
 
 ### Apply to Custom Contributor Role
 
 ```bash
-az ad sp create-for-rbac --name "GitHub-Actions-SP" --role 'infra_deploy' --scopes /subscriptions/89518450-6f9c-4039-8834-c5bab3ad3e92 --sdk-auth
+az ad sp create-for-rbac --name "GitHub-Actions-SP" --role 'infra_deploy' --scopes /subscriptions/9fa5afcc-60f3-4e03-beff-f5f5b18b5a1e --sdk-auth
 ```
 
 #### Configure a federated identity credential on an app
@@ -52,5 +52,5 @@ https://learn.microsoft.com/en-gb/entra/workload-id/workload-identity-federation
 ## Get Azure Publish Profile
 
 ```bash
-az webapp deployment list-publishing-profiles --name api-piza2nvlxc5jg --resource-group url-shortener-dev --xml
+az webapp deployment list-publishing-profiles --name token-range-service-ujpsvnz4bdlkk --resource-group url-shortener-dev-rg --xml
 ```

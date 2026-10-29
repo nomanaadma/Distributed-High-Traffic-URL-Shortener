@@ -34,9 +34,6 @@ module apiService 'modules/compute/appservice.bicep' = {
       }
     ]
   }
-  dependsOn: {
-    keyVault
-  }
 }
 
 module tokenRangeService 'modules/compute/appservice.bicep' = {
@@ -47,15 +44,12 @@ module tokenRangeService 'modules/compute/appservice.bicep' = {
     location: location
     keyVaultName: keyVault.outputs.name
   }
-  dependsOn: [
-    keyVault
-  ]
 }
 
 module postgres 'modules/storage/postgresql.bicep' = {
   name: 'postgresDeployment'
   params: {
-    name: 'postgresql-${uniqueString(resourceGroup().id)}'
+    name: 'postgresql-${uniqueId}'
     location: location
     administratorLogin: 'adminuser'
     administratorLoginPassword: pgSqlPassword
@@ -70,12 +64,9 @@ module cosmosDb 'modules/storage/cosmos-db.bicep' = {
     location: location
     kind: 'GlobalDocumentDB'
     databaseName: 'urls'
-    locationName: 'Spain Central'
+    locationName: 'southeastasia' // location param
     keyVaultName: keyVault.outputs.name
   }
-  dependsOn: [
-    keyVault
-  ]
 }
 
 module keyVaultRoleAssignment 'modules/secrets/key-vault-role-assignment.bicep' = {
@@ -88,9 +79,4 @@ module keyVaultRoleAssignment 'modules/secrets/key-vault-role-assignment.bicep' 
       // Add more principal IDs as needed
     ]
   }
-  dependsOn: [
-    keyVault
-    apiService
-    tokenRangeService
-  ]
 }

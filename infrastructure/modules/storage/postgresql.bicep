@@ -5,7 +5,7 @@ param administratorLogin string
 param administratorLoginPassword string
 param keyVaultName string
 
-resource postgresqlServer 'Microsoft.DBforPostgreSQL/flexibleServers@2023-12-01-preview' = {
+resource postgresqlServer 'Microsoft.DBforPostgreSQL/flexibleServers@2025-08-01' = {
   name: name
   location: location
   sku: {
@@ -13,7 +13,7 @@ resource postgresqlServer 'Microsoft.DBforPostgreSQL/flexibleServers@2023-12-01-
     tier: 'Burstable'
   }
   properties: {
-    version: '16'
+    version: '18'
     storage: {
       storageSizeGB: 32
     }
@@ -36,11 +36,11 @@ resource postgresqlServer 'Microsoft.DBforPostgreSQL/flexibleServers@2023-12-01-
   }
 }
 
-resource keyVault 'Microsoft.KeyVault/vaults@2023-07-01' existing = {
+resource keyVault 'Microsoft.KeyVault/vaults@2026-05-15' existing = {
   name: keyVaultName
 }
 
-resource cosmosDbConnectionString 'Microsoft.KeyVault/vaults/secrets@2023-07-01' = {
+resource postgresDbConnectionString 'Microsoft.KeyVault/vaults/secrets@2026-05-15' = {
   parent: keyVault
   name: 'Postgres--ConnectionString'
   properties: {

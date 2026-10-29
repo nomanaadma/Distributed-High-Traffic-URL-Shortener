@@ -5,19 +5,12 @@ using URL_Shortener.Core.Urls.Add;
 
 namespace URL_Shortener.Infrastructure;
 
-public class CosmosDbUrlDataStore : IUrlDataStore
+public class CosmosDbUrlDataStore(Container container) : IUrlDataStore
 {
-    private readonly Container _container;
-
-    public CosmosDbUrlDataStore(Container container)
-    {
-        _container = container;
-    }
-
-    public async Task AddAsync(ShortenedUrl shortened, CancellationToken cancellationToken)
+	public async Task AddAsync(ShortenedUrl shortened, CancellationToken cancellationToken)
     {
         var document = (ShortenedUrlCosmos)shortened;
-        await _container.CreateItemAsync(document,
+        await container.CreateItemAsync(document,
             new PartitionKey(document.PartitionKey),
             cancellationToken: cancellationToken);
     }
@@ -28,13 +21,13 @@ public class CosmosDbUrlDataStore : IUrlDataStore
         string createdBy, 
         DateTimeOffset createdOn)
     {
-        public string LongUrl { get; } = longUrl;
+	    private string LongUrl { get; } = longUrl;
 
         [JsonProperty(PropertyName = "id")] // Cosmos DB Unique Identifier
         public string ShortUrl { get; } = shortUrl;
 
-        public DateTimeOffset CreatedOn { get; } = createdOn;
-        public string CreatedBy { get; } = createdBy;
+        private DateTimeOffset CreatedOn { get; } = createdOn;
+        private string CreatedBy { get; } = createdBy;
 
         public string PartitionKey => ShortUrl[..1]; // Cosmos DB Partition Key
 

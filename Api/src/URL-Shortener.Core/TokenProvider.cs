@@ -48,7 +48,7 @@ public class TokenProvider
 
 	public event EventHandler? ReachingRangeLimit;
 
-	protected virtual void OnRangeThresholdReached(EventArgs e)
+	private void OnRangeThresholdReached(EventArgs e)
 	{
 		ReachingRangeLimit?.Invoke(this, e);
 	}
