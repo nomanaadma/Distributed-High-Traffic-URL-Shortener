@@ -37,7 +37,7 @@ resource webApp 'Microsoft.Web/sites@2025-03-01' = {
   }
 }
 
-resource webAppConfig 'Microsoft.Web/sites/config@2023-12-01' = {
+resource webAppConfig 'Microsoft.Web/sites/config@2025-03-01' = {
   parent: webApp
   name: 'web'
   properties: {

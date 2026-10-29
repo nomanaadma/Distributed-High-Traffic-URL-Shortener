@@ -3,11 +3,12 @@
 param pgSqlPassword string
 
 var uniqueId = uniqueString(resourceGroup().id)
+var keyVaultName = 'kv-${uniqueId}'
 
 module keyVault 'modules/secrets/keyvault.bicep' = {
   name: 'keyVaultDeployment'
   params: {
-    vaultName: 'kv-${uniqueId}'
+    vaultName: keyVaultName
     location: location
   }
 }
@@ -42,7 +43,7 @@ module tokenRangeService 'modules/compute/appservice.bicep' = {
     appName: 'token-range-service-${uniqueId}'
     appServicePlanName: 'plan-token-range-${uniqueId}'
     location: location
-    keyVaultName: keyVault.outputs.name
+    keyVaultName: keyVaultName
   }
 }
 
@@ -53,7 +54,7 @@ module postgres 'modules/storage/postgresql.bicep' = {
     location: location
     administratorLogin: 'adminuser'
     administratorLoginPassword: pgSqlPassword
-    keyVaultName: keyVault.outputs.name
+    keyVaultName: keyVaultName
   }
 }
 
@@ -65,18 +66,25 @@ module cosmosDb 'modules/storage/cosmos-db.bicep' = {
     kind: 'GlobalDocumentDB'
     databaseName: 'urls'
     locationName: 'southeastasia' // location param
-    keyVaultName: keyVault.outputs.name
+    keyVaultName: keyVaultName
   }
 }
 
 module keyVaultRoleAssignment 'modules/secrets/key-vault-role-assignment.bicep' = {
   name: 'keyVaultRoleAssignmentDeployment'
   params: {
-    keyVaultName: keyVault.outputs.name
+    keyVaultName: keyVaultName
     principalIds: [
       apiService.outputs.principalId
       tokenRangeService.outputs.principalId
       // Add more principal IDs as needed
     ]
+  }
+}
+
+module entraApp 'modules/identity/entra-app.bicep' = {
+  name: 'entraAppWeb'
+  params: {
+    applicationName: 'web-${uniqueId}'
   }
 }

@@ -21,13 +21,17 @@ public class CosmosDbUrlDataStore(Container container) : IUrlDataStore
         string createdBy, 
         DateTimeOffset createdOn)
     {
-	    private string LongUrl { get; } = longUrl;
+        [JsonProperty(PropertyName = "longUrl")]
+        public string LongUrl { get; } = longUrl;
 
         [JsonProperty(PropertyName = "id")] // Cosmos DB Unique Identifier
         public string ShortUrl { get; } = shortUrl;
 
-        private DateTimeOffset CreatedOn { get; } = createdOn;
-        private string CreatedBy { get; } = createdBy;
+        [JsonProperty(PropertyName = "createdOn")]
+        public DateTimeOffset CreatedOn { get; } = createdOn;
+
+        [JsonProperty(PropertyName = "createdBy")]
+        public string CreatedBy { get; } = createdBy;
 
         public string PartitionKey => ShortUrl[..1]; // Cosmos DB Partition Key
 
