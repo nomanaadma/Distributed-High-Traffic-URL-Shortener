@@ -21,7 +21,6 @@
         <PackageReference Include="xunit" Version="2.9.3" />
         <PackageReference Include="Testcontainers.Redis" Version="4.16.0" />
         <PackageReference Include="NSubstitute" Version="6.2.0" />
-        <PackageReference Include="xunit" Version="2.5.3"/>
         <PackageReference Include="xunit.runner.visualstudio" Version="4.0.1">
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
             <PrivateAssets>all</PrivateAssets>
@@ -34,7 +33,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\..\..\Libraries\URL-Shortener.Libraries.Testing\URL-Shortener.Libraries.Testing.csproj" />
-      <ProjectReference Include="..\..\src\Url-Shortener.RedirectApi\Url-Shortener.RedirectApi.csproj" />
+      <ProjectReference Include="..\..\src\URL-Shortener.RedirectApi\URL-Shortener.RedirectApi.csproj" />
     </ItemGroup>
 
 </Project>
