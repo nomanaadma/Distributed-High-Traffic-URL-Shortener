@@ -29,6 +29,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\..\..\Libraries\URL-Shortener.Libraries.Testing\URL-Shortener.Libraries.Testing.csproj" />
       <ProjectReference Include="..\..\src\URL-Shortener.Api\URL-Shortener.Api.csproj" />
     </ItemGroup>
 

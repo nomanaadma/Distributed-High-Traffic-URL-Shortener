@@ -7,8 +7,8 @@ using Microsoft.Extensions.DependencyInjection;
 using URL_Shortener.Api;
 using URL_Shortener.Core.Urls.Add;
 using Url_Shortener.Tests;
-using URL_Shortener.Tests.Extensions;
 using URL_Shortener.Tests.TestDoubles;
+using UrlShortener.Libraries.Testing.Extensions;
 
 namespace URL_Shortener.Tests;
 
