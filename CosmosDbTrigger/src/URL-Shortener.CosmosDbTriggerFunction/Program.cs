@@ -15,7 +15,7 @@ if (!string.IsNullOrEmpty(keyVaultName))
         new DefaultAzureCredential());
 }
 
-builder.ConfigureFunctionsWebApplication();
+builder.ConfigureFunctionsWebApplication(); 
 
 builder.Services.AddSingleton<CosmosClient>(s =>
     new CosmosClient(
