@@ -33,6 +33,22 @@ module apiService 'modules/compute/appservice.bicep' = {
         name: 'TokenRangeService__Endpoint'
         value: tokenRangeService.outputs.url
       }
+      {
+        name: 'AzureAd__Instance'
+        value: environment().authentication.loginEndpoint
+      }
+      {
+        name: 'AzureAd__TenantId'
+        value: tenant().tenantId
+      }
+      {
+        name: 'AzureAd__ClientId'
+        value: entraApp.outputs.appId
+      }
+      {
+        name: 'AzureAd__Scopes'
+        value: 'Urls.Read'
+      }
     ]
   }
 }
@@ -46,7 +62,6 @@ module tokenRangeService 'modules/compute/appservice.bicep' = {
     keyVaultName: keyVaultName
   }
 }
-
 
 module redirectApiService 'modules/compute/appservice.bicep' = {
   name: 'redirectApiServiceDeployment'
@@ -94,6 +109,43 @@ module cosmosDb 'modules/storage/cosmos-db.bicep' = {
   }
 }
 
+module storageAccount 'modules/storage/storage-account.bicep' = {
+  name: 'storageAccountDeployment'
+  params: {
+    name: 'storage${uniqueId}'
+    location: location
+  }
+}
+
+module cosmosTriggerFunction 'modules/compute/function.bicep' = {
+  name: 'cosmosTriggerFunctionDeployment'
+  params: {
+    appServicePlanName: 'plan-cosmos-trigger-${uniqueId}'
+    name: 'cosmos-trigger-function-${uniqueId}'
+    location: location
+    keyVaultName: keyVaultName
+    storageAccountConnectionString: storageAccount.outputs.storageConnectionString
+    appSettings: [
+      {
+        name: 'CosmosDbConnection'
+        value: '@Microsoft.KeyVault(SecretUri=https://${keyVaultName}.vault.azure.net/secrets/CosmosDb--ConnectionString/)'
+      }
+      {
+        name: 'TargetDatabaseName'
+        value: 'urls'
+      }
+      {
+        name: 'TargetContainerName'
+        value: 'byUser'
+      }
+    ]
+  }
+  dependsOn: [
+    keyVault
+    cosmosDb
+  ]
+}
+
 module keyVaultRoleAssignment 'modules/secrets/key-vault-role-assignment.bicep' = {
   name: 'keyVaultRoleAssignmentDeployment'
   params: {
@@ -102,6 +154,7 @@ module keyVaultRoleAssignment 'modules/secrets/key-vault-role-assignment.bicep' 
       apiService.outputs.principalId
       tokenRangeService.outputs.principalId
       redirectApiService.outputs.principalId
+      cosmosTriggerFunction.outputs.principalId
       // Add more principal IDs as needed
     ]
   }
@@ -114,7 +167,6 @@ module entraApp 'modules/identity/entra-app.bicep' = {
   }
 }
 
-
 module redisCache 'modules/storage/redis-cache.bicep' = {
   name: 'redisCacheDeployment'
   params: {
@@ -126,4 +178,3 @@ module redisCache 'modules/storage/redis-cache.bicep' = {
     keyVault
   ]
 }
-

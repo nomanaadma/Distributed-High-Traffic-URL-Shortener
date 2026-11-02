@@ -28,6 +28,10 @@
     <Folder Name="/RedirectApi/tests/">
         <Project Path="RedirectApi/tests/URL-Shortener.RedirectApi.Tests/URL-Shortener.RedirectApi.Tests.csproj" />
     </Folder>
+    <Folder Name="/CosmosDbTrigger/" />
+    <Folder Name="/CosmosDbTrigger/src/">
+        <Project Path="CosmosDbTrigger/src/URL-Shortener.CosmosDbTriggerFunction/URL-Shortener.CosmosDbTriggerFunction.csproj" />
+    </Folder>
     <Folder Name="/Libraries/">
         <Project Path="Libraries/URL-Shortener.Libraries.Testing/URL-Shortener.Libraries.Testing.csproj" />
     </Folder>
