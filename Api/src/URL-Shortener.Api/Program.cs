@@ -1,12 +1,14 @@
 using Azure.Identity;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Identity.Web;
 using URL_Shortener.Api.Extensions;
 using URL_Shortener.Core.Urls.Add;
 using URL_Shortener.Infrastructure.Extensions;
 using Url_Shortener.Api;
 using Url_Shortener.Api.Extensions;
+using URL_Shortener.Core.Urls.List;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -26,6 +28,7 @@ builder.Services.AddOpenApi();
 builder.Services.AddSingleton(TimeProvider.System);
 builder.Services
     .AddUrlFeature()
+    .AddListUrlsFeature()
     .AddCosmosUrlDataStore(builder.Configuration);
 
 builder.Services.AddSingleton<IEnvironmentManager, EnvironmentManager>();
@@ -106,6 +109,21 @@ app.MapPost("/api/urls",
         return Results.Created($"/api/urls/{result.Value!.ShortUrl}",
             result.Value);
     });
+
+
+app.MapGet("/api/urls", async (HttpContext context,
+		ListUrlsHandler handler,
+		int? pageSize,
+		[FromQuery(Name = "continuation")] string? continuationToken,
+		CancellationToken cancellationToken) =>
+	{
+		var request = new ListUrlsRequest(context.User.GetUserEmail(), pageSize,
+			continuationToken);
+		var urls = await handler.HandleAsync(request, cancellationToken);
+
+		return urls;
+	}
+);
 
 
 app.Run();

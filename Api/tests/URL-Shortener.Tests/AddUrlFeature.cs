@@ -4,7 +4,8 @@ using URL_Shortener.Core.Urls.Add;
 
 namespace URL_Shortener.Tests;
 
-public class AddUrlFeature(ApiFixture fixture) : IClassFixture<ApiFixture>
+[Collection("Api collection")]
+public class AddUrlFeature(ApiFixture fixture)
 {
     private readonly HttpClient _client = fixture.CreateClient();
 

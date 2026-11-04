@@ -2,6 +2,7 @@ using Microsoft.Azure.Cosmos;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using URL_Shortener.Core.Urls.Add;
+using URL_Shortener.Core.Urls.List;
 
 namespace URL_Shortener.Infrastructure.Extensions;
 
@@ -24,6 +25,18 @@ public static class ServiceCollectionExtensions
                     configuration["ContainerName"]!);
 
             return new CosmosDbUrlDataStore(container);
+        });
+        
+        services.AddSingleton<IUserUrlsReader>(s =>
+        {
+	        var cosmosClient = s.GetRequiredService<CosmosClient>();
+
+	        var container =
+		        cosmosClient.GetContainer(
+			        configuration["ByUserDatabaseName"]!,
+			        configuration["ByUserContainerName"]!);
+
+	        return new CosmosUserUrlsReader(container);
         });
         
         return services;

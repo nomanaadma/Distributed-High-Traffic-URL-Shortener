@@ -1,5 +1,6 @@
 using URL_Shortener.Core;
 using URL_Shortener.Core.Urls.Add;
+using URL_Shortener.Core.Urls.List;
 
 namespace URL_Shortener.Api.Extensions;
 
@@ -13,5 +14,13 @@ public static class ServiceCollectionExtensions
 
         return services;
     }
+    
+    public static IServiceCollection AddListUrlsFeature(this IServiceCollection services)
+    {
+	    services.AddScoped<ListUrlsHandler>();
+
+	    return services;
+    }
+    
 }
 
