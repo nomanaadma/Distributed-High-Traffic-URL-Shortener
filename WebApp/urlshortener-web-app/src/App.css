@@ -1,0 +1,38 @@
+.App {
+  text-align: center;
+}
+
+.App-header {
+  background-color: #282c34;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+button {
+  background: #f0f0f0;
+  border: none;
+  padding: 8px 20px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+button:hover {
+  background: #e0e0e0;
+}
+
+button:disabled {
+  cursor: default;
+  opacity: 0.6;
+}
+
+.error-message {
+  color: #b42318;
+  text-align: left;
+  margin: 0 0 20px;
+}

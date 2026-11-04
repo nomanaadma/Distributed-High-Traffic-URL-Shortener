@@ -54,3 +54,14 @@ https://learn.microsoft.com/en-gb/entra/workload-id/workload-identity-federation
 ```bash
 az webapp deployment list-publishing-profiles --name token-range-service-ujpsvnz4bdlkk --resource-group url-shortener-dev-rg --xml
 ```
+
+
+## Get Static Web Apps Deployment Token
+
+```bash
+az staticwebapp secrets list --name web-app-ujpsvnz4bdlkk --query "properties.apiKey"
+```
+
+# Utilities
+
+- Base62 converter: https://math.tools/calculator/base/10-62
