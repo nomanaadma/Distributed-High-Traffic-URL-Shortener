@@ -7,7 +7,7 @@ namespace URL_Shortener.Infrastructure;
 
 public class CosmosUserUrlsReader(Container container) : IUserUrlsReader
 {
-	public async Task<ListUrlsResponse> GetAsync(string createdBy, 
+	public async Task<UserUrls> GetAsync(string createdBy, 
         int pageSize,
         string? continuationToken,
         CancellationToken cancellationToken)
@@ -45,9 +45,9 @@ public class CosmosUserUrlsReader(Container container) : IUserUrlsReader
                 ? null
                 : Convert.ToBase64String(Encoding.UTF8.GetBytes(resultContinuationToken));
         
-        return new ListUrlsResponse(
+        return new UserUrls(
 	        results.Select(e => 
-			        new UrlItem(e.ShortUrl, e.LongUrl, e.CreatedOn))
+			        new UserUrlItem(e.ShortUrl, e.LongUrl, e.CreatedOn))
 		        .ToList(),
 	        responseContinuationToken);
     }

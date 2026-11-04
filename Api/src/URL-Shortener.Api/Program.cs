@@ -8,6 +8,7 @@ using URL_Shortener.Core.Urls.Add;
 using URL_Shortener.Infrastructure.Extensions;
 using Url_Shortener.Api;
 using Url_Shortener.Api.Extensions;
+using URL_Shortener.Core.Urls;
 using URL_Shortener.Core.Urls.List;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -33,6 +34,10 @@ builder.Services
 
 builder.Services.AddSingleton<IEnvironmentManager, EnvironmentManager>();
 builder.Services.AddSingleton<ITokenRangeApiClient, TokenRangeApiClient>();
+
+builder.Services.AddSingleton(
+	new RedirectLinkBuilder(
+		new Uri(builder.Configuration["RedirectService:Endpoint"]!)));
 
 builder.Services.AddHttpClient("TokenRangeService",
     client =>
@@ -68,22 +73,6 @@ builder.Services.AddAuthorization(options =>
 	// By default, all incoming requests will be authorized according to 
 	// the default policy    
 	options.FallbackPolicy = options.DefaultPolicy;
-});
-
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy("AllowWebApp", policy =>
-    {
-        if(builder.Configuration["WebAppEndpoints"] is null)
-            return;
-        
-        var origins = builder.Configuration["WebAppEndpoints"]!.Split(",");
-        
-        policy
-            .WithOrigins(origins.ToArray())
-            .AllowAnyMethod()
-            .AllowAnyHeader();
-    });
 });
 
 
