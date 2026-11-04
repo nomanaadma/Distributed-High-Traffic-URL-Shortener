@@ -1,6 +1,3 @@
-namespace UrlShortener.RedirectApi;
+namespace URL_Shortener.RedirectApi;
 
-public interface IRedirectApiAssemblyMarker
-{
-    
-}
+public interface IRedirectApiAssemblyMarker;

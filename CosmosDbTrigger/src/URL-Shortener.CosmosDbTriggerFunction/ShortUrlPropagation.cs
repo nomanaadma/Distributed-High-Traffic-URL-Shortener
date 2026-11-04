@@ -5,7 +5,7 @@ using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
-namespace UrlShortener.CosmosDbTriggerFunction
+namespace URL_Shortener.CosmosDbTriggerFunction
 {
     public class ShortUrlPropagation(ILoggerFactory loggerFactory, Container container)
     {

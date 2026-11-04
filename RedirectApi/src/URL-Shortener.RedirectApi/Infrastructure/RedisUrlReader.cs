@@ -1,6 +1,6 @@
 using StackExchange.Redis;
 
-namespace UrlShortener.RedirectApi.Infrastructure;
+namespace URL_Shortener.RedirectApi.Infrastructure;
 
 public class RedisUrlReader(IShortenedUrlReader reader, IConnectionMultiplexer redis, ILogger<RedisUrlReader> logger)
 	: IShortenedUrlReader

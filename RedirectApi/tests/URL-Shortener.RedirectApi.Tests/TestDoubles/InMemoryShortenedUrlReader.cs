@@ -1,6 +1,6 @@
-using UrlShortener.RedirectApi.Infrastructure;
+using URL_Shortener.RedirectApi.Infrastructure;
 
-namespace UrlShortener.RedirectApi.Tests.TestDoubles;
+namespace URL_Shortener.RedirectApi.Tests.TestDoubles;
 
 public class InMemoryShortenedUrlReader : Dictionary<string, ReadLongUrlResponse>, IShortenedUrlReader
 {

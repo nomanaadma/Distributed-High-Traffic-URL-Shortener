@@ -1,7 +1,7 @@
 using Microsoft.Azure.Cosmos;
 using Container = Microsoft.Azure.Cosmos.Container;
 
-namespace UrlShortener.RedirectApi.Infrastructure;
+namespace URL_Shortener.RedirectApi.Infrastructure;
 
 public class CosmosShortenedUrlReader(Container container) : IShortenedUrlReader
 {

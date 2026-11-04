@@ -1,6 +1,6 @@
 using System.Diagnostics;
 using Azure.Identity;
-using UrlShortener.RedirectApi.Infrastructure;
+using URL_Shortener.RedirectApi.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
 

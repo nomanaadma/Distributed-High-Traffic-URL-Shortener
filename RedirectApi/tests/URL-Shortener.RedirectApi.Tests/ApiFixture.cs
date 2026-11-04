@@ -5,11 +5,11 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using StackExchange.Redis;
 using Testcontainers.Redis;
-using UrlShortener.Libraries.Testing.Extensions;
-using UrlShortener.RedirectApi.Infrastructure;
-using UrlShortener.RedirectApi.Tests.TestDoubles;
+using URL_Shortener.Libraries.Testing.Extensions;
+using URL_Shortener.RedirectApi.Infrastructure;
+using URL_Shortener.RedirectApi.Tests.TestDoubles;
 
-namespace UrlShortener.RedirectApi.Tests;
+namespace URL_Shortener.RedirectApi.Tests;
 
 public class ApiFixture : WebApplicationFactory<IRedirectApiAssemblyMarker>, IAsyncLifetime
 {

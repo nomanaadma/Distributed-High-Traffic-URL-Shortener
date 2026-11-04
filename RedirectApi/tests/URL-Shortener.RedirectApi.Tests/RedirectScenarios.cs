@@ -1,9 +1,9 @@
 using Microsoft.AspNetCore.Mvc.Testing;
-using UrlShortener.RedirectApi.Infrastructure;
-using UrlShortener.RedirectApi.Tests.TestDoubles;
+using URL_Shortener.RedirectApi.Infrastructure;
+using URL_Shortener.RedirectApi.Tests.TestDoubles;
 using System.Net;
 
-namespace UrlShortener.RedirectApi.Tests;
+namespace URL_Shortener.RedirectApi.Tests;
 
 [Collection("Api collection")]
 public class RedirectScenarios(ApiFixture fixture)

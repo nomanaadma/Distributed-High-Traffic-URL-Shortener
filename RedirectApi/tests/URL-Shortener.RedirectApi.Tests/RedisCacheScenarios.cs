@@ -1,9 +1,9 @@
 using Microsoft.Extensions.Logging;
 using NSubstitute;
 using StackExchange.Redis;
-using UrlShortener.RedirectApi.Infrastructure;
+using URL_Shortener.RedirectApi.Infrastructure;
 
-namespace UrlShortener.RedirectApi.Tests;
+namespace URL_Shortener.RedirectApi.Tests;
 
 [Collection("Api collection")]
 public class RedisCacheScenarios(ApiFixture fixture)

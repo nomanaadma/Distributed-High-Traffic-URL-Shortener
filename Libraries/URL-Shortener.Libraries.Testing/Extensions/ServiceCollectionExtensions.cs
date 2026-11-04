@@ -1,6 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
 
-namespace UrlShortener.Libraries.Testing.Extensions;
+namespace URL_Shortener.Libraries.Testing.Extensions;
 
 public static class ServiceCollectionExtensions
 {

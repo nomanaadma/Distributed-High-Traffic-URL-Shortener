@@ -9,7 +9,7 @@ using URL_Shortener.Core.Urls.Add;
 using URL_Shortener.Core.Urls.List;
 using Url_Shortener.Tests;
 using URL_Shortener.Tests.TestDoubles;
-using UrlShortener.Libraries.Testing.Extensions;
+using URL_Shortener.Libraries.Testing.Extensions;
 
 namespace URL_Shortener.Tests;
 

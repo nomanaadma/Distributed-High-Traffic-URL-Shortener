@@ -1,4 +1,4 @@
-namespace UrlShortener.RedirectApi.Infrastructure;
+namespace URL_Shortener.RedirectApi.Infrastructure;
 
 public interface IShortenedUrlReader
 {
