@@ -1,9 +1,9 @@
-namespace URL_Shortener.Core.Urls;
+using URL_Shortener.Core.Urls.Delete;
 
-public enum DeleteUrlResult { Deleted, NotFound }
+namespace URL_Shortener.Core.Urls;
 
 public interface IUrlDataStore
 {
     Task AddAsync(ShortenedUrl shortened, CancellationToken cancellationToken);
-    Task<DeleteUrlResult> DeleteAsync(string shortUrl, string requestedBy, CancellationToken cancellationToken);
+    Task<DeleteUrlResponse> DeleteAsync(string shortUrl, string requestedBy, CancellationToken cancellationToken);
 }

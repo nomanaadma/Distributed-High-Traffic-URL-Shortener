@@ -9,6 +9,7 @@ using URL_Shortener.Infrastructure.Extensions;
 using Url_Shortener.Api;
 using Url_Shortener.Api.Extensions;
 using URL_Shortener.Core.Urls;
+using URL_Shortener.Core.Urls.Delete;
 using URL_Shortener.Core.Urls.List;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -152,11 +153,18 @@ app.MapGet("/api/urls", async (HttpContext context,
 
 app.MapDelete("/api/urls/{shortUrl}", async (string shortUrl, 
 		HttpContext context, 
-		IUrlDataStore store,
+		DeleteUrlHandler handler,
 		CancellationToken cancellationToken) =>
 	{
-		var result = await store.DeleteAsync(shortUrl, context.User.GetUserEmail(), cancellationToken);
-		return result == DeleteUrlResult.Deleted ? Results.NoContent() : Results.NotFound();
+		var request = new DeleteUrlRequest(shortUrl, context.User.GetUserEmail());
+		var result = await handler.HandleAsync(request, cancellationToken);
+		
+		if (!result.Succeeded)
+		{
+			return Results.BadRequest(result.Error);
+		}
+		
+		return result.Value == DeleteUrlResponse.Deleted ? Results.NoContent() : Results.NotFound();
 	}
 );
 

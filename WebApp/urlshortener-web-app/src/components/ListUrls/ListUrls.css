@@ -33,3 +33,7 @@
     overflow-wrap: anywhere;
 }
 
+.delete-button {
+    background: linear-gradient(87.03deg, #f66a6a 16.38%, #da7d7d 62.94%);
+    color: #fff;
+}

@@ -1,6 +1,7 @@
 using Microsoft.Azure.Cosmos;
 using Newtonsoft.Json;
 using URL_Shortener.Core.Urls;
+using URL_Shortener.Core.Urls.Delete;
 
 namespace URL_Shortener.Infrastructure;
 
@@ -43,7 +44,7 @@ public class CosmosDbUrlDataStore(Container container) : IUrlDataStore
     
     private const int SoftDeleteTtlSeconds = 3600;
     
-    public async Task<DeleteUrlResult> DeleteAsync(string shortUrl, string requestedBy,
+    public async Task<DeleteUrlResponse> DeleteAsync(string shortUrl, string requestedBy,
 	    CancellationToken cancellationToken)
     {
 	    var partitionKey = new PartitionKey(shortUrl[..1]);
@@ -56,12 +57,12 @@ public class CosmosDbUrlDataStore(Container container) : IUrlDataStore
 	    }
 	    catch (CosmosException ex) when (ex.StatusCode == System.Net.HttpStatusCode.NotFound)
 	    {
-		    return DeleteUrlResult.NotFound;
+		    return DeleteUrlResponse.NotFound;
 	    }
 
 	    if (owner.IsDeleted ||
 	        !string.Equals(owner.CreatedBy, requestedBy, StringComparison.OrdinalIgnoreCase))
-		    return DeleteUrlResult.NotFound;
+		    return DeleteUrlResponse.NotFound;
 
 	    await container.PatchItemAsync<OwnerRecord>(shortUrl, partitionKey,
 		    [
@@ -70,8 +71,8 @@ public class CosmosDbUrlDataStore(Container container) : IUrlDataStore
 		    ],
 		    cancellationToken: cancellationToken);
 
-	    return DeleteUrlResult.Deleted;
+	    return DeleteUrlResponse.Deleted;
     }
 
-    internal record OwnerRecord(string CreatedBy, bool IsDeleted);
+    private record OwnerRecord(string CreatedBy, bool IsDeleted);
 }
