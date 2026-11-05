@@ -150,6 +150,15 @@ app.MapGet("/api/urls", async (HttpContext context,
 	}
 );
 
+app.MapDelete("/api/urls/{shortUrl}", async (string shortUrl, 
+		HttpContext context, 
+		IUrlDataStore store,
+		CancellationToken cancellationToken) =>
+	{
+		var result = await store.DeleteAsync(shortUrl, context.User.GetUserEmail(), cancellationToken);
+		return result == DeleteUrlResult.Deleted ? Results.NoContent() : Results.NotFound();
+	}
+);
 
 app.Run();
 

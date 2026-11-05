@@ -32,7 +32,7 @@ app.MapGet("r/{shortUrl}",
         return response switch
         {
             { Found: true, LongUrl: not null }
-                => Results.Redirect(response.LongUrl, true),
+                => Results.Redirect(response.LongUrl, false),
             _ => Results.NotFound()
         };
     });

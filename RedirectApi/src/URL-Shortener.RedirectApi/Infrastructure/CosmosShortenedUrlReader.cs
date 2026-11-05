@@ -16,7 +16,7 @@ public class CosmosShortenedUrlReader(Container container) : IShortenedUrlReader
 
             return record switch
             {
-                { Resource: not null } => new ReadLongUrlResponse(true, record.Resource.LongUrl),
+                { Resource: { IsDeleted: false } } => new ReadLongUrlResponse(true, record.Resource.LongUrl),
                 _ => new ReadLongUrlResponse(false, null)
             };
         }
@@ -26,5 +26,5 @@ public class CosmosShortenedUrlReader(Container container) : IShortenedUrlReader
         }
     }
 
-	public record CosmosUrlRecord(string LongUrl);
+	public record CosmosUrlRecord(string LongUrl, bool IsDeleted);
 }

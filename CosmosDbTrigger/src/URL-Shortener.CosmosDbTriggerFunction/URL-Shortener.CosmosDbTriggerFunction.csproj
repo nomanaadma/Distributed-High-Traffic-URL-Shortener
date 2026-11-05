@@ -15,6 +15,7 @@
         <PackageReference Include="Microsoft.Azure.Functions.Worker.Extensions.CosmosDB" Version="4.16.1" />
         <PackageReference Include="Microsoft.Azure.Functions.Worker.Extensions.Http.AspNetCore" Version="2.1.1" />
         <PackageReference Include="Microsoft.Azure.Functions.Worker.Sdk" Version="2.1.0" />
+        <PackageReference Include="StackExchange.Redis" Version="3.4.31" />
     </ItemGroup>
     <ItemGroup>
         <None Update="host.json">

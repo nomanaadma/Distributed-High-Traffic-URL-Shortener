@@ -4,6 +4,7 @@ using Microsoft.Azure.Functions.Worker.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using StackExchange.Redis;
 
 var builder = FunctionsApplication.CreateBuilder(args);
 
@@ -21,6 +22,9 @@ builder.Services.AddSingleton<CosmosClient>(s =>
     new CosmosClient(
         connectionString: builder.Configuration["CosmosDb:ConnectionString"]
     ));
+
+builder.Services.AddSingleton<IConnectionMultiplexer>(_ =>
+	ConnectionMultiplexer.Connect(builder.Configuration["Redis:ConnectionString"]!));
 
 builder.Services.AddSingleton<Container>(s =>
 {

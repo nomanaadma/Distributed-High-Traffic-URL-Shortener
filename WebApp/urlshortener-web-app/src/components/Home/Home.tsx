@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { InteractionRequiredAuthError } from '@azure/msal-browser'
 import { useMsal } from '@azure/msal-react'
 import { apiRequest } from '../../authConfig'
-import { createUrl, getUrls } from '../../api/urls'
+import { createUrl, getUrls, deleteUrl } from '../../api/urls'
 import type { ShortUrl, UrlPage } from '../../types'
 import ListUrls from '../ListUrls/ListUrls'
 import LogoutButton from '../LogoutButton/LogoutButton'
@@ -33,6 +33,18 @@ function Home() {
       throw err
     }
   }, [instance, account])
+
+    const handleDelete = async (id: string) => {
+        setError(null)
+        try {
+            const token = await getToken()
+            await deleteUrl(token, id)
+            setUrls((prev) => prev.filter((u) => u.id !== id))
+        } catch (err) {
+            console.error(err)
+            setError('Could not delete that URL. Try again.')
+        }
+    }
 
   const applyPage = (page: UrlPage, reset: boolean) => {
     setUrls((prev) => (reset ? page.urls : [...prev, ...page.urls]))
@@ -119,6 +131,7 @@ function Home() {
         continuationToken={continuationToken}
         loading={loading}
         onLoadMore={handleLoadMore}
+        onDelete={handleDelete}
       />
     </div>
   )

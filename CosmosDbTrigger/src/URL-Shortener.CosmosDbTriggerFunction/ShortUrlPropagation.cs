@@ -1,13 +1,15 @@
 using System;
 using System.Collections.Generic;
+using System.Net;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using StackExchange.Redis;
 
 namespace URL_Shortener.CosmosDbTriggerFunction
 {
-    public class ShortUrlPropagation(ILoggerFactory loggerFactory, Container container)
+    public class ShortUrlPropagation(ILoggerFactory loggerFactory, Container container, IConnectionMultiplexer redis)
     {
 	    private readonly ILogger _logger = loggerFactory.CreateLogger<ShortUrlPropagation>();
 
@@ -25,6 +27,23 @@ namespace URL_Shortener.CosmosDbTriggerFunction
             foreach (var document in input)
             {
                 _logger.LogInformation("Short Url: {ShortUrl}", document.Id);
+                
+                if (document.IsDeleted)
+                {
+	                try
+	                {
+		                await container.DeleteItemAsync<object>(document.Id,
+			                new PartitionKey(document.CreatedBy));
+	                }
+	                catch (CosmosException ex) when (ex.StatusCode == HttpStatusCode.NotFound)
+	                {
+		                // Already gone (e.g. the trigger retried); nothing to do.
+	                }
+
+	                await redis.GetDatabase().KeyDeleteAsync(document.Id);
+	                continue;
+                }
+                
                 try
                 {
                     var cosmosDbDocument = new ShortenedUrlEntity(
@@ -50,6 +69,7 @@ namespace URL_Shortener.CosmosDbTriggerFunction
         public DateTimeOffset CreatedOn { get; set; }
         public string CreatedBy { get; set; } = string.Empty;
         public string LongUrl { get; set; } = string.Empty;
+        public bool IsDeleted { get; set; }
     }
     
     public class ShortenedUrlEntity(

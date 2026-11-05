@@ -20,3 +20,9 @@ export async function createUrl(token: string, longUrl: string): Promise<ShortUr
     )
     return response.data
 }
+
+export async function deleteUrl(token: string, id: string): Promise<void> {
+    await axios.delete(`${apiEndpoint}/api/urls/${encodeURIComponent(id)}`, {
+        headers: { Authorization: `Bearer ${token}` },
+    })
+}

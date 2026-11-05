@@ -1,6 +1,7 @@
 using Microsoft.Azure.Cosmos;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using URL_Shortener.Core.Urls;
 using URL_Shortener.Core.Urls.Add;
 using URL_Shortener.Core.Urls.List;
 

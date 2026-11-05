@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
 using URL_Shortener.Api;
+using URL_Shortener.Core.Urls;
 using URL_Shortener.Core.Urls.Add;
 using URL_Shortener.Core.Urls.List;
 using Url_Shortener.Tests;

@@ -23,7 +23,7 @@ public class RedirectScenarios(ApiFixture fixture)
         var response = await _client.GetAsync($"/r/{shortUrl}");
         
         response.Should()
-	        .HaveHttpStatusCode(HttpStatusCode.MovedPermanently);
+	        .HaveHttpStatusCode(HttpStatusCode.Redirect);
         
         response.Headers.Location.Should().Be("https://google.com");
     }
