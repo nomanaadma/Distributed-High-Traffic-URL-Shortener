@@ -40,6 +40,7 @@ builder.Services.AddSingleton(TimeProvider.System);
 builder.Services
     .AddUrlFeature()
     .AddListUrlsFeature()
+    .AddDeleteUrlFeature()
     .AddCosmosUrlDataStore(builder.Configuration);
 
 builder.Services.AddSingleton<IEnvironmentManager, EnvironmentManager>();

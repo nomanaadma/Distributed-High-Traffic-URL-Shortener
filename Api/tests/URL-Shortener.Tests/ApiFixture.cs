@@ -19,6 +19,7 @@ public class ApiFixture : WebApplicationFactory<IApiAssemblyMarker>
 	public ApiFixture()
 	{
 		Environment.SetEnvironmentVariable("RedirectService__Endpoint", "https://urlshortener.tests/r/");
+		Environment.SetEnvironmentVariable("TokenRangeService__Endpoint", "https://urlshortener.tests/");
 	}
 	
     protected override void ConfigureWebHost(IWebHostBuilder builder)
