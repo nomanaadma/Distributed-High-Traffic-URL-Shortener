@@ -1,5 +1,5 @@
 import axios from 'axios'
-import type { UrlPage } from '../types'
+import type {ShortUrl, UrlPage} from '../types'
 
 const apiEndpoint = import.meta.env.VITE_API_ENDPOINT
 const PAGE_SIZE = 5
@@ -12,10 +12,11 @@ export async function getUrls(token: string, continuation: string | null): Promi
   return response.data
 }
 
-export async function createUrl(token: string, longUrl: string): Promise<void> {
-  await axios.post(
-    `${apiEndpoint}/api/urls`,
-    { LongUrl: longUrl },
-    { headers: { Authorization: `Bearer ${token}` } },
-  )
+export async function createUrl(token: string, longUrl: string): Promise<ShortUrl> {
+    const response = await axios.post<ShortUrl>(
+        `${apiEndpoint}/api/urls`,
+        { LongUrl: longUrl },
+        { headers: { Authorization: `Bearer ${token}` } },
+    )
+    return response.data
 }

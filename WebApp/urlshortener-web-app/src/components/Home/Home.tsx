@@ -87,7 +87,8 @@ function Home() {
     setError(null)
     try {
       const token = await getToken()
-      await createUrl(token, longUrl)
+      const created = await createUrl(token, longUrl)
+      setUrls((prev) => [created, ...prev])
     } catch (err) {
       console.error(err)
       setError('Could not shorten that URL. Try again.')

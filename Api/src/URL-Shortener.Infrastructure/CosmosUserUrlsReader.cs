@@ -13,7 +13,7 @@ public class CosmosUserUrlsReader(Container container) : IUserUrlsReader
         CancellationToken cancellationToken)
     {
         var query = 
-            new QueryDefinition("SELECT * FROM c WHERE c.PartitionKey = @partitionKey")
+            new QueryDefinition("SELECT * FROM c WHERE c.PartitionKey = @partitionKey ORDER BY c.CreatedOn DESC")
             .WithParameter("@partitionKey", createdBy);
         
         var queryContinuationToken = continuationToken is null
