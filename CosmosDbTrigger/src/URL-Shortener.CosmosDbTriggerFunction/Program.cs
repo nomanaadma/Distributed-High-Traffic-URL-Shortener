@@ -1,4 +1,5 @@
 using Azure.Identity;
+using HealthChecks.CosmosDb;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Azure.Functions.Worker.Builder;
 using Microsoft.Extensions.Configuration;
@@ -33,5 +34,12 @@ builder.Services.AddSingleton<Container>(s =>
         builder.Configuration["TargetDatabaseName"], 
         builder.Configuration["TargetContainerName"]);
 });
+
+
+builder.Services.AddHealthChecks()
+	.AddAzureCosmosDB(optionsFactory: _ => new AzureCosmosDbHealthCheckOptions()
+	{
+		DatabaseId = builder.Configuration["TargetDatabaseName"]!
+	});
 
 builder.Build().Run();

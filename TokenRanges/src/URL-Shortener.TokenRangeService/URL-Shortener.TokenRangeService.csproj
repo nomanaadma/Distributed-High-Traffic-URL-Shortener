@@ -8,6 +8,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <PackageReference Include="AspNetCore.HealthChecks.NpgSql" Version="9.0.0" />
         <PackageReference Include="AwesomeAssertions.Web" Version="3.0.0" />
         <PackageReference Include="Azure.Extensions.AspNetCore.Configuration.Secrets" Version="1.5.2" />
         <PackageReference Include="Azure.Identity" Version="1.21.0" />

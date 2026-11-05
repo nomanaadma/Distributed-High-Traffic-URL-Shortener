@@ -24,6 +24,7 @@ resource webApp 'Microsoft.Web/sites@2025-03-01' = {
     httpsOnly: true
     siteConfig: {
       linuxFxVersion: 'DOTNETCORE|10.0'
+      healthCheckPath: '/healthz'
       appSettings: concat([
         {
           name: 'keyVaultName'
