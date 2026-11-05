@@ -106,8 +106,6 @@ function Home() {
       setError('Could not shorten that URL. Try again.')
       throw err
     }
-    // Reload from the first page so the new URL shows up.
-    await loadUrls(null, true)
   }
 
   const handleLogout = () => {
