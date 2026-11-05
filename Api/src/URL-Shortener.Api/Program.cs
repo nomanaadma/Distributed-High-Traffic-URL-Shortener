@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Identity.Web;
+using Azure.Monitor.OpenTelemetry.AspNetCore;
 using URL_Shortener.Api.Extensions;
 using URL_Shortener.Core.Urls.Add;
 using URL_Shortener.Infrastructure.Extensions;
@@ -102,6 +103,13 @@ builder.Services.AddCors(options =>
 			.AllowAnyHeader();
 	});
 });
+
+
+var telemetryConnectionString = builder.Configuration["APPLICATIONINSIGHTS_CONNECTION_STRING"];
+if (telemetryConnectionString is not null)
+	builder.Services
+		.AddOpenTelemetry()
+		.UseAzureMonitor();
 
 
 var app = builder.Build();

@@ -1,6 +1,6 @@
 {
   "profiles": {
-    "UrlShortener.CosmosDbTriggerFunction": {
+    "URL_Shortener.CosmosDbTriggerFunction": {
       "commandName": "Project",
       "commandLineArgs": "--port 7289",
       "launchBrowser": false

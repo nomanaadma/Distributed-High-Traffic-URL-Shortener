@@ -11,8 +11,10 @@
         <PackageReference Include="AspNetCore.HealthChecks.CosmosDb" Version="9.0.0" />
         <PackageReference Include="Azure.Extensions.AspNetCore.Configuration.Secrets" Version="1.5.2" />
         <PackageReference Include="Azure.Identity" Version="1.21.0" />
+        <PackageReference Include="Microsoft.ApplicationInsights.WorkerService" Version="3.2.0" />
         <PackageReference Include="Microsoft.Azure.Cosmos" Version="3.63.3" />
         <PackageReference Include="Microsoft.Azure.Functions.Worker" Version="2.52.0" />
+        <PackageReference Include="Microsoft.Azure.Functions.Worker.ApplicationInsights" Version="2.51.0" />
         <PackageReference Include="Microsoft.Azure.Functions.Worker.Extensions.CosmosDB" Version="4.16.1" />
         <PackageReference Include="Microsoft.Azure.Functions.Worker.Extensions.Http.AspNetCore" Version="2.1.1" />
         <PackageReference Include="Microsoft.Azure.Functions.Worker.Sdk" Version="2.1.0" />

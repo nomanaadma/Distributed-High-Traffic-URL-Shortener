@@ -1,4 +1,5 @@
 using Azure.Identity;
+using Azure.Monitor.OpenTelemetry.AspNetCore;
 using URL_Shortener.TokenRangeService;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -17,6 +18,13 @@ builder.Services.AddHealthChecks()
 
 builder.Services.AddSingleton(
 	new TokenRangeManager(builder.Configuration["Postgres:ConnectionString"]!));
+
+
+var telemetryConnectionString = builder.Configuration["APPLICATIONINSIGHTS_CONNECTION_STRING"];
+if (telemetryConnectionString is not null)
+	builder.Services
+		.AddOpenTelemetry()
+		.UseAzureMonitor();
 
 var app = builder.Build();
 

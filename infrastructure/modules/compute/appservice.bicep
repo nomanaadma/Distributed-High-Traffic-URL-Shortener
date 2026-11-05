@@ -2,7 +2,17 @@
 param appServicePlanName string
 param appName string
 param keyVaultName string
+param logAnalyticsWorkspaceId string
 param appSettings array = []
+
+module appInsights '../telemetry/app-insights.bicep' = {
+  name: '${appName}AppInsightsDeployment'
+  params: {
+    location: location
+    name: 'app-insights-${appName}'
+    logAnalyticsWorkspaceId: logAnalyticsWorkspaceId
+  }
+}
 
 resource appServicePlan 'Microsoft.Web/serverfarms@2025-03-01' = {
   kind: 'linux'
@@ -25,12 +35,23 @@ resource webApp 'Microsoft.Web/sites@2025-03-01' = {
     siteConfig: {
       linuxFxVersion: 'DOTNETCORE|10.0'
       healthCheckPath: '/healthz'
-      appSettings: concat([
-        {
-          name: 'keyVaultName'
-          value: keyVaultName
-        }
-      ], appSettings)
+      appSettings: concat(
+        [
+          {
+            name: 'keyVaultName'
+            value: keyVaultName
+          }
+          {
+            name: 'APPINSIGHTS_INSTRUMENTATIONKEY'
+            value: appInsights.outputs.instrumentrationKey
+          }
+          {
+            name: 'APPLICATIONINSIGHTS_CONNECTION_STRING'
+            value: appInsights.outputs.connectionString
+          }
+        ],
+        appSettings
+      )
     }
   }
   identity: {

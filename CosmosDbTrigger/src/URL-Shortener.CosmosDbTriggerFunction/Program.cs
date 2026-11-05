@@ -1,6 +1,7 @@
 using Azure.Identity;
 using HealthChecks.CosmosDb;
 using Microsoft.Azure.Cosmos;
+using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -18,6 +19,10 @@ if (!string.IsNullOrEmpty(keyVaultName))
 }
 
 builder.ConfigureFunctionsWebApplication(); 
+
+builder.Services
+	.AddApplicationInsightsTelemetryWorkerService()
+	.ConfigureFunctionsApplicationInsights();
 
 builder.Services.AddSingleton<CosmosClient>(s =>
     new CosmosClient(

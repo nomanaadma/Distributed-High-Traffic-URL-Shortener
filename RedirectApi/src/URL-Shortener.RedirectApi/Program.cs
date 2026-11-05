@@ -1,11 +1,17 @@
 using System.Diagnostics;
 using Azure.Identity;
+using Azure.Monitor.OpenTelemetry.Exporter;
 using HealthChecks.CosmosDb;
 using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
+using OpenTelemetry.Logs;
+using OpenTelemetry.Metrics;
+using OpenTelemetry.Resources;
+using OpenTelemetry.Trace;
 using StackExchange.Redis;
 using URL_Shortener.RedirectApi.Infrastructure;
+using URL_Shortener.RedirectApi;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -32,6 +38,63 @@ builder.Services.AddUrlReader(
     containerName: builder.Configuration["ContainerName"]!,
     redisConnectionString: builder.Configuration["Redis:ConnectionString"]!);
 
+
+
+var applicationName = builder.Environment.ApplicationName ?? "RedirectApi";
+
+var telemetryConnectionString = builder.Configuration["APPLICATIONINSIGHTS_CONNECTION_STRING"];
+
+builder.Logging.AddOpenTelemetry(
+	options =>
+	{
+		options.SetResourceBuilder(
+			ResourceBuilder
+				.CreateDefault()
+				.AddService(serviceName: applicationName));
+
+		options.IncludeFormattedMessage = true;
+        
+		if (telemetryConnectionString is not null)
+			options.AddAzureMonitorLogExporter(o => { o.ConnectionString = telemetryConnectionString; });
+		else
+			options.AddConsoleExporter();
+	});
+
+
+builder.Services.AddOpenTelemetry()
+	.ConfigureResource(resource => resource
+		.AddService(serviceName: applicationName))
+	.WithTracing(
+		tracing =>
+		{
+			tracing.AddSource("Azure.*");
+			tracing.AddAspNetCoreInstrumentation();
+			tracing.AddHttpClientInstrumentation();
+			tracing.AddRedisInstrumentation();
+			tracing.AddSource("Azure.Cosmos.Operation");
+
+			if (telemetryConnectionString is not null)
+				tracing.AddAzureMonitorTraceExporter(o => { o.ConnectionString = telemetryConnectionString; });
+			else
+				tracing.AddConsoleExporter();
+		}
+	)
+	.WithMetrics(
+		metrics =>
+		{
+			metrics
+				.AddAspNetCoreInstrumentation()
+				.AddHttpClientInstrumentation()
+				.AddMeter(ApplicationDiagnostics.Meter.Name);
+            
+			if (telemetryConnectionString is not null)
+				metrics.AddAzureMonitorMetricExporter(o => { o.ConnectionString = telemetryConnectionString; });
+			else 
+				metrics.AddConsoleExporter();
+		});
+
+
+
 var app = builder.Build();
 
 app.MapHealthChecks("/healthz", new HealthCheckOptions()
@@ -45,8 +108,9 @@ app.MapGet("r/{shortUrl}",
     async (string shortUrl, IShortenedUrlReader reader, CancellationToken cancellationToken) =>
     {
         var response = await reader.GetLongUrlAsync(shortUrl, cancellationToken);
-
-        Activity.Current?.SetTag("Year", DateTime.Today.Year); // Dumb example
+        
+        if(response.Found)
+	        ApplicationDiagnostics.RedirectExecutedCounter.Add(1);
         
         return response switch
         {
