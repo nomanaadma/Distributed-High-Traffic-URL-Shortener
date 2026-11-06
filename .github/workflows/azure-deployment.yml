@@ -44,5 +44,5 @@ jobs:
         with:
           resourceGroupName: ${{ vars.RESOURCE_GROUP_NAME }}
           template: ./infrastructure/main.bicep
-          parameters: pgSqlPassword=${{ secrets.PG_SQL_PASSWORD }}
+          parameters: customDomain=nomanaadma.dev pgSqlPassword=${{ secrets.PG_SQL_PASSWORD }}
           additionalArguments: "--only-show-errors"
