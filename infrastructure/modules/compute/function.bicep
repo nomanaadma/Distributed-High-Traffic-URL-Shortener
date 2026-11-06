@@ -6,6 +6,8 @@ param appSettings array = []
 param logAnalyticsWorkspaceId string
 @secure()
 param storageAccountConnectionString string
+param subnetId string
+
 
 module appInsights '../telemetry/app-insights.bicep' = {
   name: '${name}AppInsightsDeployment'
@@ -95,6 +97,15 @@ resource webAppConfig 'Microsoft.Web/sites/config@2025-03-01' = {
   name: 'web'
   properties: {
     scmType: 'GitHub'
+  }
+}
+
+
+resource functionVirtualNetwork 'Microsoft.Web/sites/networkConfig@2025-03-01' = {
+  parent: function
+  name: 'virtualNetwork'
+  properties: {
+    subnetResourceId: subnetId
   }
 }
 

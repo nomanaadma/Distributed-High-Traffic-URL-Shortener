@@ -5,12 +5,113 @@ param customDomain string
 
 var uniqueId = uniqueString(resourceGroup().id)
 var keyVaultName = 'kv-${uniqueId}'
+var vnetName = 'vnet-${uniqueId}'
+var apiSubnetName = 'subnet-api-${uniqueId}'
+var redirectApiSubnetName = 'subnet-redirect-${uniqueId}'
+var tokenRangeSubnetName = 'subnet-token-range-${uniqueId}'
+var cosmosTriggerSubnetName = 'subnet-cosmos-trigger-${uniqueId}'
+var redisSubnetName = 'subnet-redis-${uniqueId}'
+var postgresSubnetName = 'subnet-postgres-${uniqueId}'
+
+module vnet 'modules/network/virtual-network.bicep' = {
+  name: 'vnetDeployment'
+  params: {
+    name: vnetName
+    location: location
+    subnets: [
+      {
+        name: apiSubnetName
+        addressPrefix: '10.0.1.0/24'
+        delegations: [
+          {
+            name: 'Microsoft.Web/serverfarms'
+            properties: {
+              serviceName: 'Microsoft.Web/serverfarms'
+            }
+          }
+        ]
+        serviceEndpoints: [
+          { service: 'Microsoft.KeyVault' }
+          { service: 'Microsoft.AzureCosmosDB' }
+          { service: 'Microsoft.Web' }
+        ]
+      }
+      {
+        name: redirectApiSubnetName
+        addressPrefix: '10.0.2.0/24'
+        delegations: [
+          {
+            name: 'Microsoft.Web/serverfarms'
+            properties: {
+              serviceName: 'Microsoft.Web/serverfarms'
+            }
+          }
+        ]
+        serviceEndpoints: [
+          { service: 'Microsoft.KeyVault' }
+          { service: 'Microsoft.AzureCosmosDB' }
+        ]
+      }
+      {
+        name: tokenRangeSubnetName
+        addressPrefix: '10.0.3.0/24'
+        delegations: [
+          {
+            name: 'Microsoft.Web/serverfarms'
+            properties: {
+              serviceName: 'Microsoft.Web/serverfarms'
+            }
+          }
+        ]
+        serviceEndpoints: [
+          { service: 'Microsoft.KeyVault' }
+          { service: 'Microsoft.SQL' }
+        ]
+      }
+      {
+        name: cosmosTriggerSubnetName
+        addressPrefix: '10.0.4.0/24'
+        delegations: [
+          {
+            name: 'Microsoft.Web/serverfarms'
+            properties: {
+              serviceName: 'Microsoft.Web/serverfarms'
+            }
+          }
+        ]
+        serviceEndpoints: [
+          { service: 'Microsoft.Storage' }
+          { service: 'Microsoft.KeyVault' }
+          { service: 'Microsoft.AzureCosmosDB' }
+        ]
+      }
+      {
+        name: redisSubnetName
+        addressPrefix: '10.0.5.0/24'
+        delegations: []
+        serviceEndpoints: []
+      }
+      {
+        name: postgresSubnetName
+        addressPrefix: '10.0.6.0/24'
+        delegations: []
+        serviceEndpoints: []
+      }
+    ]
+  }
+}
 
 module keyVault 'modules/secrets/keyvault.bicep' = {
   name: 'keyVaultDeployment'
   params: {
     vaultName: keyVaultName
     location: location
+    subnets: [
+      resourceId('Microsoft.Network/virtualNetworks/subnets', vnetName, apiSubnetName)
+      resourceId('Microsoft.Network/virtualNetworks/subnets', vnetName, cosmosTriggerSubnetName)
+      resourceId('Microsoft.Network/virtualNetworks/subnets', vnetName, tokenRangeSubnetName)
+      resourceId('Microsoft.Network/virtualNetworks/subnets', vnetName, redirectApiSubnetName)
+    ]
   }
 }
 
@@ -30,6 +131,16 @@ module apiService 'modules/compute/appservice.bicep' = {
     location: location
     keyVaultName: keyVault.outputs.name
     logAnalyticsWorkspaceId: logAnalyticsWorkspace.outputs.id
+    vnetId: resourceId('Microsoft.Network/virtualNetworks/subnets', vnetName, apiSubnetName)
+    ipSecurityRestrictions: [
+      {
+        name: 'AllowFrontDoor'
+        action: 'Allow'
+        priority: 100
+        tag: 'ServiceTag'
+        ipAddress: 'AzureFrontDoor.Backend'
+      }
+    ]
     appSettings: [
       {
         name: 'DatabaseName'
@@ -77,6 +188,9 @@ module apiService 'modules/compute/appservice.bicep' = {
       }
     ]
   }
+  dependsOn: [
+    vnet
+  ]
 }
 
 module tokenRangeService 'modules/compute/appservice.bicep' = {
@@ -87,7 +201,21 @@ module tokenRangeService 'modules/compute/appservice.bicep' = {
     location: location
     keyVaultName: keyVaultName
     logAnalyticsWorkspaceId: logAnalyticsWorkspace.outputs.id
+    vnetId: resourceId('Microsoft.Network/virtualNetworks/subnets', vnetName, tokenRangeSubnetName)
+    ipSecurityRestrictions: [
+      {
+        tag: 'Default'
+        action: 'Allow'
+        priority: 100
+        name: 'AllowApiSubnet'
+        vnetSubnetResourceId: resourceId('Microsoft.Network/virtualNetworks/subnets', vnetName, apiSubnetName)
+      }
+    ]
   }
+  dependsOn: [
+    keyVault
+    vnet
+  ]
 }
 
 module redirectApiService 'modules/compute/appservice.bicep' = {
@@ -98,6 +226,16 @@ module redirectApiService 'modules/compute/appservice.bicep' = {
     location: location
     keyVaultName: keyVaultName
     logAnalyticsWorkspaceId: logAnalyticsWorkspace.outputs.id
+    vnetId: resourceId('Microsoft.Network/virtualNetworks/subnets', vnetName, redirectApiSubnetName)
+    ipSecurityRestrictions: [
+      {
+        name: 'AllowFrontDoor'
+        action: 'Allow'
+        priority: 100
+        tag: 'ServiceTag'
+        ipAddress: 'AzureFrontDoor.Backend'
+      }
+    ]
     appSettings: [
       {
         name: 'DatabaseName'
@@ -111,6 +249,7 @@ module redirectApiService 'modules/compute/appservice.bicep' = {
   }
   dependsOn: [
     keyVault
+    vnet
   ]
 }
 
@@ -122,7 +261,12 @@ module postgres 'modules/storage/postgresql.bicep' = {
     administratorLogin: 'adminuser'
     administratorLoginPassword: pgSqlPassword
     keyVaultName: keyVaultName
+    vnetId: resourceId('Microsoft.Network/virtualNetworks', vnetName)
+    subnetId: resourceId('Microsoft.Network/virtualNetworks/subnets', vnetName, postgresSubnetName)
   }
+  dependsOn: [
+    vnet
+  ]
 }
 
 module cosmosDb 'modules/storage/cosmos-db.bicep' = {
@@ -134,7 +278,16 @@ module cosmosDb 'modules/storage/cosmos-db.bicep' = {
     databaseName: 'urls'
     locationName: 'southeastasia' // location param
     keyVaultName: keyVaultName
+    subnets: [
+      resourceId('Microsoft.Network/virtualNetworks/subnets', vnetName, apiSubnetName)
+      resourceId('Microsoft.Network/virtualNetworks/subnets', vnetName, redirectApiSubnetName)
+      resourceId('Microsoft.Network/virtualNetworks/subnets', vnetName, cosmosTriggerSubnetName)
+    ]
   }
+  dependsOn: [
+    keyVault
+    vnet
+  ]
 }
 
 module storageAccount 'modules/storage/storage-account.bicep' = {
@@ -154,6 +307,7 @@ module cosmosTriggerFunction 'modules/compute/function.bicep' = {
     keyVaultName: keyVaultName
     logAnalyticsWorkspaceId: logAnalyticsWorkspace.outputs.id
     storageAccountConnectionString: storageAccount.outputs.storageConnectionString
+    subnetId: resourceId('Microsoft.Network/virtualNetworks/subnets', vnetName, cosmosTriggerSubnetName)
     appSettings: [
       {
         name: 'CosmosDbConnection'
@@ -172,6 +326,7 @@ module cosmosTriggerFunction 'modules/compute/function.bicep' = {
   dependsOn: [
     keyVault
     cosmosDb
+    vnet
   ]
 }
 
@@ -208,9 +363,12 @@ module redisCache 'modules/storage/redis-cache.bicep' = {
     name: 'redis-cache-${uniqueId}'
     location: location
     keyVaultName: keyVaultName
+    vnetId: resourceId('Microsoft.Network/virtualNetworks', vnetName)
+    subnetId: resourceId('Microsoft.Network/virtualNetworks/subnets', vnetName, redisSubnetName)
   }
   dependsOn: [
     keyVault
+    vnet
   ]
 }
 
@@ -221,7 +379,6 @@ module staticWebApp 'modules/web/static-web-app.bicep' = {
     location: location
   }
 }
-
 
 module frontDoor 'modules/network/front-door.bicep' = {
   name: 'frontDoorDeployment'

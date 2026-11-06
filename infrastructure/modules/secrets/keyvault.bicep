@@ -1,5 +1,6 @@
 param location string = resourceGroup().location
 param vaultName string
+param subnets array
 
 resource keyVault 'Microsoft.KeyVault/vaults@2026-05-15' = {
   name: vaultName
@@ -11,6 +12,14 @@ resource keyVault 'Microsoft.KeyVault/vaults@2026-05-15' = {
     }
     enableRbacAuthorization: true
     tenantId: subscription().tenantId
+    networkAcls: {
+      defaultAction: 'Deny'
+      virtualNetworkRules: [
+        for subnetId in subnets: {
+          id: subnetId
+        }
+      ]
+    }
   }
 }
 
